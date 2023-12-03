@@ -1,33 +1,39 @@
-
 body {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
 }
 
 main {
-    flex: 1 0 auto;
-}
-div>div.col{
-    background-color: bisque;
-    border: 2px solid black;
-
+  flex: 1 0 auto;
 }
 
-#btnListar{
-    width: 100%;
+#btnListar {
+  width: 100%;
 }
-.textoError{
-    width: 50%;
-    margin: auto;
-    font-size: x-small;
-    text-align: center;
-    color: red;
-    border: solid 5px chocolate;
+.textoError {
+  width: 50%;
+  margin: auto;
+  font-size: x-small;
+  text-align: center;
+  color: red;
+  border: solid 5px chocolate;
 }
-.textoCorrecto{
-    font-size: x-small;
-    text-align: center;
-    color: rgb(71, 161, 73);
+.textoCorrecto {
+  font-size: x-small;
+  text-align: center;
+  color: rgb(71, 161, 73);
+}
+.loginForm {
+  max-width: 600px;
+  padding: 16px;
+  margin: 0px auto;
+}
 
+.hidden {
+  display: none;
+}
+
+.error {
+  color: red;
 }
