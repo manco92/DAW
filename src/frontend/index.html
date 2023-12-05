@@ -36,15 +36,26 @@
           <a href="#!" class="brand-logo left" style="margin-left: 15px"
             >Smart Home</a
           >
-          <ul id="nav-mobile" class="right" style="margin-right: 15px">
-            <li><a href="#">Help</a></li>
-          </ul>
+          <button
+            id="logoutButton"
+            class="right btn"
+            style="margin-right: 15px; margin-top: 15px"
+          >
+            Cerrar sesión
+          </button>
         </div>
       </nav>
     </header>
     <main>
       <div class="container hidden" id="contenido">
         <h3>Smart Home Web Client!</h3>
+        <!-- Add new device -->
+        <a
+          href="#modal2"
+          class="waves-effect waves-light btn modal-trigger btn-floating right btn-large waves-effect waves-light"
+          id="edit_${d.id}"
+          ><i class="material-icons">add</i></a
+        >
         <div class="row">
           <div id="lista" miAtt="true" class="col s12">
             <ul class="collection" id="listaDisp"></ul>
@@ -84,7 +95,7 @@
             <label for="iPassword">Password</label>
           </div>
 
-          <button id="btnGuardar" class="modal-close btn">Guardar</button>
+          <button id="btnIngresar" class="modal-close btn">Ingresar</button>
           <div id="loginError" class="error hidden">
             Usuario o Contraseña inválidos.
           </div>
@@ -92,12 +103,40 @@
       </div>
     </main>
 
-    <!-- Modal Structure -->
+    <!-- Edit Device Modal Structure -->
     <div id="modal1" class="modal">
       <div class="modal-content">
         <div class="col s12 m6 l6">
           <h1>Editar dispositivo</h1>
           <div id="modalContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Device Modal Structure -->
+    <div id="modal2" class="modal">
+      <div class="modal-content">
+        <div class="col s12 m6 l6">
+          <h1>Agregar dispositivo</h1>
+          <div id="addDeviceModalContent">
+            <div class="input-field">
+              <label for="iAddDeviceName">Nombre</label>
+              <input id="iAddDeviceName" type="text" />
+            </div>
+            <div class="input-field">
+              <label for="iAddDeviceDescription">Descripción</label>
+              <input id="iAddDeviceDescription" type="text" />
+            </div>
+            <label>Tipo</label>
+            <select id="iAddDeviceType" class="browser-default">
+              <option value="1">Option 1</option>
+              <option value="2">Option 2</option>
+              <option value="3">Option 3</option>
+            </select>
+            <div style="margin-top: 15px">
+              <button id="addDevicesButton" class="btn">Agregar</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

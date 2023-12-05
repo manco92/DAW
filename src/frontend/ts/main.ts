@@ -24,6 +24,8 @@ class Main implements EventListenerObject {
 
           let ul = document.getElementById("listaDisp");
 
+          ul.innerHTML = "";
+
           for (let d of datos) {
             let itemList = ` <li class="collection-item avatar">
                         <img src="./static/images/lightbulb.png" alt="" class="circle">
@@ -48,6 +50,7 @@ class Main implements EventListenerObject {
                       </div>
                         </a>
                         <a href="#modal1" class="waves-effect waves-light btn modal-trigger" id="edit_${d.id}">Editar</a>
+                        <button id="borrarDevice_${d.id}" class="btn">BORRAR</button>
                       </li>`;
 
             ul.innerHTML += itemList;
@@ -55,9 +58,13 @@ class Main implements EventListenerObject {
           for (let d of datos) {
             let checkbox = document.getElementById("cb_" + d.id);
             let editButton = document.getElementById("edit_" + d.id);
+            let botonBorrarDevice = document.getElementById(
+              "borrarDevice_" + d.id
+            );
 
             checkbox.addEventListener("click", this);
             editButton.addEventListener("click", this);
+            botonBorrarDevice.addEventListener("click", this);
           }
         } else {
           console.log("no encontre nada");
@@ -74,7 +81,7 @@ class Main implements EventListenerObject {
     xmlRequest.onreadystatechange = () => {
       if (xmlRequest.readyState == 4) {
         if (xmlRequest.status == 200) {
-          console.log("llego resputa", xmlRequest.responseText);
+          this.buscarDevices();
         } else {
           alert("Salio mal la consulta");
         }
@@ -90,7 +97,7 @@ class Main implements EventListenerObject {
     xmlRequest.send(JSON.stringify(s));
   }
 
-  private cargarUsuario(): void {
+  private ingresarUsuario(): void {
     let iNombre = <HTMLInputElement>document.getElementById("iNombre");
     let iPassword = <HTMLInputElement>document.getElementById("iPassword");
     let contentContainer = document.getElementById("contenido");
@@ -109,13 +116,128 @@ class Main implements EventListenerObject {
     }
   }
 
+  private cerrarSesion(): void {
+    let contentContainer = document.getElementById("contenido");
+    let loginContainer = document.getElementById("login");
+    contentContainer.classList.add("hidden");
+    loginContainer.classList.remove("hidden");
+  }
+
+  private editarCambiarDevices(): void {
+    const iDeviceID = <HTMLInputElement>document.getElementById("iDeviceID");
+    const iDeviceName = <HTMLInputElement>(
+      document.getElementById("iDeviceName")
+    );
+    const iDeviceDescription = <HTMLInputElement>(
+      document.getElementById("iDeviceDescription")
+    );
+    const iDeviceType = <HTMLSelectElement>(
+      document.getElementById("iDeviceType")
+    );
+
+    let xmlRequest = new XMLHttpRequest();
+
+    xmlRequest.onreadystatechange = () => {
+      if (xmlRequest.readyState == 4) {
+        if (xmlRequest.status == 200) {
+          console.log("llego resputa", xmlRequest.responseText);
+          const editModal = document.getElementById("modal1");
+          const instance = M.Modal.getInstance(editModal);
+          instance.close();
+          this.buscarDevices();
+        } else {
+          alert("Salio mal la consulta");
+        }
+      }
+    };
+
+    xmlRequest.open("POST", "http://localhost:8000/device", true);
+    xmlRequest.setRequestHeader("Content-Type", "application/json");
+    let deviceState = {
+      id: iDeviceID.value,
+      name: iDeviceName.value,
+      description: iDeviceDescription.value,
+      type: iDeviceType.value,
+    };
+
+    xmlRequest.send(JSON.stringify(deviceState));
+  }
+
+  private addDevice(): void {
+    const iAddDeviceName = <HTMLInputElement>(
+      document.getElementById("iAddDeviceName")
+    );
+    const iAddDeviceDescription = <HTMLInputElement>(
+      document.getElementById("iAddDeviceDescription")
+    );
+    const iAddDeviceType = <HTMLSelectElement>(
+      document.getElementById("iAddDeviceType")
+    );
+
+    let xmlRequest = new XMLHttpRequest();
+
+    xmlRequest.onreadystatechange = () => {
+      if (xmlRequest.readyState == 4) {
+        if (xmlRequest.status == 200) {
+          const addDeviceModal = document.getElementById("modal2");
+          const instance = M.Modal.getInstance(addDeviceModal);
+          instance.close();
+          this.buscarDevices();
+          iAddDeviceName.value = "";
+          iAddDeviceDescription.value = "";
+          iAddDeviceType.value = "";
+        } else {
+          alert("Salio mal la consulta");
+        }
+      }
+    };
+
+    xmlRequest.open("POST", "http://localhost:8000/device/add", true);
+    xmlRequest.setRequestHeader("Content-Type", "application/json");
+    let deviceState = {
+      name: iAddDeviceName.value,
+      description: iAddDeviceDescription.value,
+      type: iAddDeviceType.value,
+    };
+
+    xmlRequest.send(JSON.stringify(deviceState));
+  }
+
+  private borrarDevice(deviceId: string): void {
+    console.log({ deviceId });
+    let xmlRequest = new XMLHttpRequest();
+
+    xmlRequest.onreadystatechange = () => {
+      if (xmlRequest.readyState == 4) {
+        if (xmlRequest.status == 200) {
+          this.buscarDevices();
+        } else {
+          alert("Salio mal la consulta");
+        }
+      }
+    };
+
+    xmlRequest.open("DELETE", "http://localhost:8000/device", true);
+    xmlRequest.setRequestHeader("Content-Type", "application/json");
+    xmlRequest.send(JSON.stringify({ id: deviceId }));
+  }
+
   handleEvent(object: Event): void {
     let elemento = <HTMLElement>object.target;
 
     if ("btnListar" == elemento.id) {
       // this.buscarDevices();
-    } else if ("btnGuardar" == elemento.id) {
-      this.cargarUsuario();
+    } else if ("btnIngresar" == elemento.id) {
+      this.ingresarUsuario();
+    } else if ("logoutButton" == elemento.id) {
+      this.cerrarSesion();
+    } else if ("editarDevicesButton" == elemento.id) {
+      this.editarCambiarDevices();
+    } else if ("addDevicesButton" == elemento.id) {
+      this.addDevice();
+    } else if (elemento.id.startsWith("borrarDevice_")) {
+      const deviceId = elemento.id.split("_")[1];
+      this.borrarDevice(deviceId);
     } else if (elemento.id.startsWith("cb_")) {
       let checkbox = <HTMLInputElement>elemento;
       console.log(
@@ -132,9 +254,11 @@ class Main implements EventListenerObject {
       const dispositivo = this.backendDatos.find(
         (d) => d.id === Number(elemento.id.split("_")[1])
       );
+
       const modalContentContainer = document.getElementById("modalContent");
 
       modalContentContainer.innerHTML = `
+      <input id="iDeviceID" type="text" style="display: none;" value="${dispositivo.id}" />
       <div class="input-field">
         <label for="iDeviceName">Nombre</label>
         <input id="iDeviceName" type="text" value="${dispositivo.name}" />
@@ -144,13 +268,18 @@ class Main implements EventListenerObject {
         <input id="iDeviceDescription" type="text" value="${dispositivo.description}" />
       </div>
       <label>Tipo</label>
-      <select class="browser-default" value="${dispositivo.type}">
+      <select id="iDeviceType" class="browser-default" value="${dispositivo.type}">
         <option value="1">Option 1</option>
         <option value="2">Option 2</option>
         <option value="3">Option 3</option>
       </select>
+      <div style="margin-top: 15px">
+      <button id="editarDevicesButton" class="btn">OK</button>
+      </div>
       `;
       // modalContent
+      let botonEditarDevices = document.getElementById("editarDevicesButton");
+      botonEditarDevices.addEventListener("click", this);
     }
   }
 }
@@ -163,6 +292,11 @@ window.addEventListener("load", () => {
 
   let main1: Main = new Main();
 
-  let botonGuardar = document.getElementById("btnGuardar");
+  let botonGuardar = document.getElementById("btnIngresar");
+  let botonLogout = document.getElementById("logoutButton");
+  let botonAddDevice = document.getElementById("addDevicesButton");
+
   botonGuardar.addEventListener("click", main1);
+  botonLogout.addEventListener("click", main1);
+  botonAddDevice.addEventListener("click", main1);
 });
