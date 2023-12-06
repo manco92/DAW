@@ -5,12 +5,6 @@ class Main implements EventListenerObject {
   private admin_password: string = "123456";
   private backendDatos: any = [];
 
-  private buscarPersonas() {
-    for (let u of this.usuarios) {
-      console.log(u.mostrar(), this.usuarios.length);
-    }
-  }
-
   private buscarDevices() {
     let xmlRequest = new XMLHttpRequest();
 
@@ -83,7 +77,7 @@ class Main implements EventListenerObject {
         if (xmlRequest.status == 200) {
           this.buscarDevices();
         } else {
-          alert("Salio mal la consulta");
+          alert("Salió mal la consulta");
         }
       }
     };
@@ -146,7 +140,7 @@ class Main implements EventListenerObject {
           instance.close();
           this.buscarDevices();
         } else {
-          alert("Salio mal la consulta");
+          alert("Salió mal la consulta");
         }
       }
     };
@@ -187,7 +181,7 @@ class Main implements EventListenerObject {
           iAddDeviceDescription.value = "";
           iAddDeviceType.value = "";
         } else {
-          alert("Salio mal la consulta");
+          alert("Salió mal la consulta");
         }
       }
     };

@@ -30,8 +30,6 @@ app.get("/otraCosa/:id/:algo", (req, res, next) => {
         console.log("err", err);
         res.status(409).send(err);
       }
-
-      //console.log(fields);
     }
   );
 });
